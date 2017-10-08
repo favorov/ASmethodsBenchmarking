@@ -34,6 +34,13 @@ if len(sys.argv) == 1:
 	parser.print_help()
 	sys.exit(1)
 
+#modification by favorov@sensi.org
+#GENE_ID differs from gtf to gtf, in gencode it is "gene_id"
+#this is the value from original script
+#GENE_ID="geneID"
+#this is for gencode
+GENE_ID="gene_id"
+
 GENE = Set(["gene", "transposable_element_gene","pseudogene"])
 EXON = Set(["exon", "pseudogenic_exon"])
 TX = Set(["transcript", "mRNA", "mrna"])
@@ -85,9 +92,9 @@ def meanVar(_files, _gff_file , _output):
 				_dict_counts[ feature.name ] = [0]*NFILE
 				_genes[feature.iv] += feature.name
 			if feature.type in TX:
-                                if feature.attr["geneID"] not in _dict_counts:
-				    _dict_counts[feature.attr["geneID"]] = [0]*NFILE
-				    _genes[feature.iv] += feature.attr["geneID"]
+                                if feature.attr[GENE_ID] not in _dict_counts:
+				    _dict_counts[feature.attr[GENE_ID]] = [0]*NFILE
+				    _genes[feature.iv] += feature.attr[GENE_ID]
 	if MODE == "AS-genes":
 		## Bug: Does not report last gene in gff if it has at least two transcript
 		transcript= set()
@@ -102,16 +109,16 @@ def meanVar(_files, _gff_file , _output):
 				cur_line = feature
 				transcript.clear()
                         if feature.type in TX:
-                            if last_gene_id == feature.attr["geneID"]: 
+                            if last_gene_id == feature.attr[GENE_ID]: 
                                 transcript.add(feature.attr["ID"])
                             else:
                                 if len(transcript) > 1:
-                                    if feature.attr["geneID"] not in _dict_counts:
-					_dict_counts[feature.attr["geneID"]] = [0]*NFILE
-					_genes[feature.iv] +=  feature.attr["geneID"]
+                                    if feature.attr[GENE_ID] not in _dict_counts:
+					_dict_counts[feature.attr[GENE_ID]] = [0]*NFILE
+					_genes[feature.iv] +=  feature.attr[GENE_ID]
                                 transcript.clear()
                                 transcript.add(feature.attr["ID"])
-                                last_gene_id = feature.attr["geneID"]
+                                last_gene_id = feature.attr[GENE_ID]
 			if feature.type in EXON:
 				transcript.add(feature.attr["Parent"])
         print "num of genes to simulate: ", len(_dict_counts) 
