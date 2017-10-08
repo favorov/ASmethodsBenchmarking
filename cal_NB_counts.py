@@ -36,6 +36,7 @@ if len(sys.argv) == 1:
 
 #modification by favorov@sensi.org
 #GENE_ID differs from gtf to gtf, in gencode it is "gene_id"
+#http://htseq.readthedocs.io/en/release_0.9.1/features.html?highlight=gff
 #this is the value from original script
 #GENE_ID="geneID"
 #this is for gencode
