@@ -45,12 +45,22 @@ GENE_ID="gene_id"
 GENE = Set(["gene", "transposable_element_gene","pseudogene"])
 EXON = Set(["exon", "pseudogenic_exon"])
 TX = Set(["transcript", "mRNA", "mrna"])
+SAM = Set([".sam", ".SAM"])
+BAM = Set([".bam", ".BAM"])
 ## parse inputs
 args = parser.parse_args()
 name_gtf = args.gene_model
 NREPS=args.nreps
 MODE=args.mode
 NTARG = args.ntarg
+
+#added by favorov@sensi.org
+#I will replace HTSeq.SAM_Reader calls with it
+def appropriateReader(_filename): # sam for sam, bam for bam
+	if _filename[-4:] in SAM:
+		return HTSeq.SAM_Reader(_filename)
+	if _filename[-4:] in BAM:
+		return HTSeq.BAM_Reader(_filename)
 
 ## define global variables
 def countSam(_sam_file, _genes, _dic, _idx):
@@ -127,7 +137,7 @@ def meanVar(_files, _gff_file , _output):
 	_file_nb_count = open(_output+'.nbcounts','w')
 	## This loop read through the input list and call countSam for each input file  
 	for f in _files:
-		sam_file=HTSeq.SAM_Reader(f)
+		sam_file=appropriateReader(f)
 		_dict_counts=countSam(sam_file, _genes,_dict_counts, idx)
 		f.close()
 		idx += 1
@@ -181,7 +191,7 @@ def main():
 	gff_file=HTSeq.GFF_Reader(file_gtf)
 	
 	##### Sanity Check
-	samfile=HTSeq.SAM_Reader(group1_f[0])
+	samfile=HTSeq.appropriateReader(group1_f[0])
 	is_chr_sam = None
 	set_chr_gff = set()
 	for almnt in samfile:
